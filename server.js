@@ -37,7 +37,7 @@ app.listen(PORT, () => {
 const Role = db.role
 
 // In development
-// sequelize.sync({ force: true }).then(() => {
+// db.sequelize.sync({ force: true }).then(() => {
 //   console.log('Drop and Resync Db')
 //   initial()
 // })

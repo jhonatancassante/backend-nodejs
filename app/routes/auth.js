@@ -1,7 +1,7 @@
 import verifySignUp from '../middleware/verifySignUp.js'
-import { signup, signin } from '../controllers/auth.js'
+import controller from '../controllers/auth.js'
 
-function auth (app) {
+const auth = app => {
   app.use(function (req, res, next) {
     res.header(
       'Access-Control-Allow-Headers',
@@ -16,10 +16,12 @@ function auth (app) {
       verifySignUp.checkDuplicateUsernameOrEmail,
       verifySignUp.checkRolesExisted
     ],
-    signup
+    controller.signup
   )
 
-  app.post('/api/auth/signin', signin)
+  app.post('/api/auth/signin', controller.signin)
+
+  app.post('/api/auth/refreshtoken', controller.refreshToken)
 }
 
 export default auth
