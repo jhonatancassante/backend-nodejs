@@ -18,7 +18,7 @@ app.use(urlencoded({ extended: true }))
 
 // simple route
 app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to bezkoder application.' })
+  res.json({ message: 'Welcome to back-end application.' })
 })
 
 // routes
@@ -34,30 +34,41 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`)
 })
 
-const Role = db.role
+// For production
+// db.sequelize.sync();
 
 // In development
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log('Drop and Resync Db')
-//   initial()
-// })
+import bcrypt from 'bcryptjs'
+const Role = db.role
+const User = db.user
+const Op = db.Sequelize.Op
+const rolesUser = ["moderator", "user"]
 
-// For production
-db.sequelize.sync();
+db.sequelize.sync({ force: true }).then(() => {
+  console.log('Drop and Resync Db')
+  initial()
+})
 
 function initial () {
-  Role.create({
-    id: 1,
-    name: 'user'
-  })
-
-  Role.create({
-    id: 2,
-    name: 'moderator'
-  })
-
-  Role.create({
-    id: 3,
-    name: 'admin'
+  for (let i = 0; i < db.ROLES.length; i++) {
+    Role.create({
+      id: i + 1,
+      name: db.ROLES[i]
+    })
+  }
+  User.create({
+    username: 'jhonatanjb',
+    email: 'jhonatan.cassante@live.com',
+    password: bcrypt.hashSync('123', 8)
+  }).then(user => {
+    Role.findAll({
+      where: {
+        name: {
+          [Op.or]: rolesUser
+        }
+      }
+    }).then(roles => {
+      user.setRoles(roles)
+    })
   })
 }

@@ -102,7 +102,9 @@ const refreshToken = async (req, res) => {
     })
 
     if (!refreshToken) {
-      return res.status(403).send({ message: 'Refresh token is not in database!' })
+      return res
+        .status(403)
+        .send({ message: 'Refresh token is not in database!' })
     }
 
     if (RefreshToken.verifyExpiration(refreshToken)) {
